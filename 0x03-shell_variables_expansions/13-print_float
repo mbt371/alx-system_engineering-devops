@@ -1,2 +1,2 @@
 #!/bin/bash
-printf '$.2f\n' #NUM[D[D[D[D[D[D[D[D[D[D[D[D^[D&[D%[C[C[C[C[C[C[C[C[C[C[C
+printf '%.2f\n' $NUM
