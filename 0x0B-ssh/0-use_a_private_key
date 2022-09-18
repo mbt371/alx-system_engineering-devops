@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-# example of private key use
-ssh -i ~/.ssh/school ubuntu@35.229.112.105
+# Connecting to a server through a private key
+ssh -i ~/.ssh/school ubuntu@44.211.26.34
+
