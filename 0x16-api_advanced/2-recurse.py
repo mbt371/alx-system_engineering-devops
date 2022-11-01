@@ -1,25 +1,28 @@
 #!/usr/bin/python3
-"""
-Prints the titles of all hot articles
-"""
+""" Query subs on Reddit titles of all hot posts """
+import json
 import requests
 
+REDDIT_URL = 'http://reddit.com/r/{}/hot.json'
 
-def recurse(subreddit, hot_list=[], after=""):
-    """returns titles of all hot articles"""
-    params = {"after": after}
-    headers = {"User-agent": "Andre"}
-    data = requests.get("https://www.reddit.com/r/{}/hot.json".format(
-        subreddit),
-        headers=headers, allow_redirects=False, params=params)
-    if data.status_code == 200:
-        data = data.json()
-        posts = data["data"]["children"]
-        after = data["data"]["after"]
-        if after is None:
-            return hot_list
+
+def recurse(subreddit, hot_list=[], after=None):
+    """ Get all posts via recursion """
+    headers = {"User-Agent": "Rodrigo Zarate Query all hot posts"}
+    params = {"limit": 50}
+    if isinstance(after, str):
+        if after != "THEEND":
+            params['after'] = after
         else:
-            hot_list.append(posts[0]["data"]["title"])
-            return recurse(subreddit, hot_list, after)
-    else:
+            return hot_list
+    response = requests.get(REDDIT_URL.format(subreddit),
+                            headers=headers, params=params)
+    if response.status_code != 200:
         return None
+    data = response.json().get('data', {})
+    after = data.get('after', 'THEEND')
+    if not after:
+        after = "THEEND"
+    hot_list = hot_list + [post.get('data', {}).get('title')
+                           for post in data.get('children', [])]
+    return recurse(subreddit, hot_list, after)
